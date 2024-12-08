@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: betsson-frontend
+    image: betsson-frontend-app
+    build:
+      context: .
+      target: production
+    volumes:
+      - ./src:/app/src

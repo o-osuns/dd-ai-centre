@@ -1,0 +1,52 @@
+.heroImg {
+  animation: revealClip 2s forwards ease-in-out;
+  clip-path: polygon(0 0, 0% 0, 0% 100%, 0% 100%);
+  animation-delay: 3s;
+}
+@keyframes revealClip {
+  from {
+    clip-path: polygon(0 0, 0% 0, 0% 100%, 0% 100%);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+.hero-eye {
+  animation: eyeBlink 8s infinite ease-in-out;
+  opacity: 1;
+}
+@keyframes eyeBlink {
+  0% {
+    opacity: 0.24;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.24;
+  }
+}
+.aiana-button:hover::after,
+.aiana-button:hover::before {
+  animation: glowMove 2.5s forwards ease-in-out;
+  animation-delay: 0.5s;
+}
+@keyframes glowMove {
+  0% {
+    width: 60%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+.rotateAnimation {
+  animation: rotate 5s infinite linear;
+  transform: rotate(360deg) translateX(-50%);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg) translateX(-50%);
+  }
+}

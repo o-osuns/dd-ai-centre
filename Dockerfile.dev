@@ -1,0 +1,20 @@
+# Use a Node.js image for development
+FROM node:20.6.1-alpine3.18 
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source files
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the React app in development mode
+CMD ["npm", "start"]
