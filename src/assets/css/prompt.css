@@ -1,0 +1,26 @@
+
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin: 10px 0px;
+    padding: 10px;
+    background: #18141A;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.chat-message-user {
+    text-align: right;
+}
+
+textarea::placeholder {
+    color: red;
+    opacity: 1; /* Firefox */
+  }
+  
+  ::-ms-textarea-placeholder { /* Edge 12 -18 */
+    color: red;
+  }

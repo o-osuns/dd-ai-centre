@@ -2,8 +2,8 @@ version: "3.8"
 
 services:
   app:
-    container_name: betsson-frontend
-    image: betsson-frontend-app
+    container_name: dd-ai-frontend
+    image: dd-ai-frontend-app
     build:
       context: .
       target: production
