@@ -65,37 +65,41 @@ const Home = () => {
 
   return (
     <>
-    {isLoading && <Loader />}
-      <MobileNav />
-      <div id="mm-0" className="mm-page mm-slideout">
-        <div id='preloader' style={{ display: `${isLoaded ? 'none' : ''}` }}></div>
+      {isLoading ? <Loader /> : (
+        <>
+          <MobileNav />
+          <div id="mm-0" className="mm-page mm-slideout">
+            <div id='preloader' style={{ display: `${isLoaded ? 'none' : ''}` }}></div>
 
-        <div id='page'>
-          <Header />
-          <div className="sub-header">
-            <div className="container">
-              <div className="row">
-                <div className="col-md-9 col-sm-12"></div>
-              </div>
-            </div>
-          </div>
-
-          <main style={{ transform: 'none' }}>
-            <div className="item-list-summary" style={{ transform: 'none' }}>
-              <div className="container" style={{ transform: 'none' }}>
-                <div className="row" style={{ transform: 'none' }}>
-                  <div className='col-lg-3' id='mainContent' style={{ position: 'relative', overflow: 'visible', boxSizing: 'border-box', minHeight: '1px' }}>
-                    <ChatPreference mobilityChecked={handleSelectChatPreference} />
-                  </div>
-                  <div className='col-lg-9'>
-                    <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} />
+            <div id='page'>
+              <Header />
+              <div className="sub-header">
+                <div className="container">
+                  <div className="row">
+                    <div className="col-md-9 col-sm-12"></div>
                   </div>
                 </div>
               </div>
+
+              <main style={{ transform: 'none' }}>
+                <div className="item-list-summary" style={{ transform: 'none' }}>
+                  <div className="container" style={{ transform: 'none' }}>
+                    <div className="row" style={{ transform: 'none' }}>
+                      <div className='col-lg-3' id='mainContent' style={{ position: 'relative', overflow: 'visible', boxSizing: 'border-box', minHeight: '1px' }}>
+                        <ChatPreference mobilityChecked={handleSelectChatPreference} />
+                      </div>
+                      <div className='col-lg-9'>
+                        <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </main>
             </div>
-          </main>
-        </div>
-      </div>
+          </div>
+        </>
+      )}
+
     </>
   );
 };
