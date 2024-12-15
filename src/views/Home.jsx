@@ -10,6 +10,7 @@ const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [mobilityPromptSelected, setMobilityPromptSelected] = useState(false);
+  const [aiResponse, setAiResponse] = useState([]);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -18,14 +19,10 @@ const Home = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     const chatInput = document.getElementById('chatInput');
-    const chatBody = document.getElementById('chatBody');
     const message = chatInput.value;
     if (!message) return;
 
     let prompt = '';
-
-    chatInput.value = '';
-    chatBody.innerHTML += `<div class="chat-message chat-message-user">${message}</div>`;
 
     if (mobilityPromptSelected) {
       prompt = `Convert the following natural language query into SQL without explanations: 
@@ -42,13 +39,15 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.post('http://197.156.234.44:11434/api/generate', { model: 'llama3:latest', prompt: prompt, stream: false});
-      (response.data?.done) ? 
-        chatBody.innerHTML += `<div class="chat-message chat-message-bot">${response.data?.response}</div>` : 
-        chatBody.innerHTML += `<div class="chat-message chat-message-bot">Sorry I cannot provide a feeback because the model is still processing!</div>`;      
+      const response = await axios.post('http://197.156.243.44:11434/api/generate', { model: 'llama3:latest', prompt: prompt, stream: false});
+      if (response.data?.done) {
+        setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: response.data?.response }]);
+      } else {
+        setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: 'Sorry I cannot provide a feeback because the model is still processing!' }]);
+      }
     } catch (error) {
       console.log(error);
-      chatBody.innerHTML += `<div class="chat-message chat-message-bot">Sorry I cannot provide a feeback because an exception occurred!</div>`;
+      setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: 'Sorry I cannot provide a feeback because an exception occurred!'}]);
     } finally {
       setIsLoading(false);
     }    
@@ -57,6 +56,7 @@ const Home = () => {
   const handleClearChat = () => {
     const chatBody = document.getElementById('chatBody');
     chatBody.innerHTML = '';
+    setAiResponse([]);
   }
 
   const handleSelectChatPreference = (e) => {
@@ -89,7 +89,7 @@ const Home = () => {
                         <ChatPreference mobilityChecked={handleSelectChatPreference} />
                       </div>
                       <div className='col-lg-9'>
-                        <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} />
+                        <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} chat={aiResponse}/>
                       </div>
                     </div>
                   </div>
