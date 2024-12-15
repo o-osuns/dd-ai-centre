@@ -42,7 +42,7 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.post('http://197.156.234.44:11434/api/generate', { model: 'llama3:latest', prompt: prompt, stream: false});
+      const response = await axios.post('localhost:11434/api/generate', { model: 'llama3:latest', prompt: prompt, stream: false});
       (response.data?.done) ? 
         chatBody.innerHTML += `<div class="chat-message chat-message-bot">${response.data?.response}</div>` : 
         chatBody.innerHTML += `<div class="chat-message chat-message-bot">Sorry I cannot provide a feeback because the model is still processing!</div>`;      
