@@ -3,23 +3,30 @@ import Header from '../components/Header';
 import MobileNav from '../components/MobileNav';
 import ChatBox from '../components/ChatBox';
 import ChatPreference from '../components/ChatPreference';
-import axios from 'axios';
 import Loader from '../components/loader/Loader';
+import { ChatMessageHistory } from "langchain/stores/message/in_memory";
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import { Ollama } from "@langchain/ollama";
 
 const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [mobilityPromptSelected, setMobilityPromptSelected] = useState(false);
-  const [aiResponse, setAiResponse] = useState([]);
+  const [aiResponse, setAiResponse] = useState({ botMessage: '' });
+  const [userMessage, setUserMessage] = useState('');
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
 
   const handleSubmit = async () => {
-    setIsLoading(true);
+    setIsLoading(false);
+    setAiResponse({ botMessage: '' });
     const chatInput = document.getElementById('chatInput');
     const message = chatInput.value;
+    // Create a chat history to store messages
+    const mainChatMessageHistory = new ChatMessageHistory();
+
     if (!message) return;
 
     let prompt = '';
@@ -38,13 +45,59 @@ const Home = () => {
       prompt = message;
     }
 
+    setUserMessage(message);
+
     try {
-      const response = await axios.post('http://197.156.243.44:11434/api/generate', { model: 'llama3:latest', prompt: prompt, stream: false});
-      if (response.data?.done) {
-        setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: response.data?.response }]);
-      } else {
-        setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: 'Sorry I cannot provide a feeback because the model is still processing!' }]);
-      }
+      const ollamaModel = await new Ollama({ model: 'llama3:latest', stream: true, baseUrl: 'http://localhost:11434' });
+      await mainChatMessageHistory.addMessage(new HumanMessage(prompt));
+      const stream = new ReadableStream({
+        async start(controller) {
+          let fullResponse = '';
+          let buffer = '';
+          let lastWord = '';
+
+          // Process the AI's response in chunks
+          for await (const chunk of await ollamaModel.stream(prompt)) {
+            fullResponse += chunk;
+            buffer += chunk;
+            // Split the buffer into words
+            console.log(chunk);
+            const words = buffer.split(/\s+/);
+
+            // If we have 15 or more words, send them to the client
+            if (words.length >= 15) {
+              const completeWords = words.slice(0, -1).join(" ");              
+              // Keep the last word in the buffer
+
+              buffer = words[words.length - 1];
+              lastWord = completeWords.split(/\s+/).pop();
+              // Add the AI's response to the chat history              
+            }
+
+            if (buffer) {
+              controller.enqueue(
+              new TextEncoder().encode(
+                JSON.stringify({
+                text: buffer,
+                lastWord: lastWord,
+                isLast: true,
+                })
+              )
+              );
+            }
+
+            // Add the AI's full response to the chat history
+            await mainChatMessageHistory.addMessage(
+              new AIMessage(fullResponse)
+            );
+
+            const prevAIResponse = aiResponse;
+            setAiResponse(prevResponse => ({ ...prevResponse, botMessage: fullResponse }));
+          }
+          controller.close();
+        }
+      });
+
     } catch (error) {
       console.log(error);
       setAiResponse(prevState => [...prevState, { userMessage: message, botMessage: 'Sorry I cannot provide a feeback because an exception occurred!'}]);
@@ -70,7 +123,6 @@ const Home = () => {
           <MobileNav />
           <div id="mm-0" className="mm-page mm-slideout">
             <div id='preloader' style={{ display: `${isLoaded ? 'none' : ''}` }}></div>
-
             <div id='page'>
               <Header />
               <div className="sub-header">
@@ -89,7 +141,7 @@ const Home = () => {
                         <ChatPreference mobilityChecked={handleSelectChatPreference} />
                       </div>
                       <div className='col-lg-9'>
-                        <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} chat={aiResponse}/>
+                        <ChatBox handleClearChat={handleClearChat} handleSubmit={handleSubmit} userMessage={userMessage} chat={aiResponse}/>
                       </div>
                     </div>
                   </div>

@@ -18,7 +18,11 @@
     "react-redux": "9.1.2",
     "react-toastify": "10.0.6",
     "font-awesome": "4.7.0",
-    "@reduxjs/toolkit": "2.3.0"
+    "@reduxjs/toolkit": "2.3.0",
+    "@langchain/ollama":"0.1.4",
+    "@langchain/google-genai":"0.1.5",
+    "@langchain/community": "0.3.19",
+    "@langchain/core": "0.3.24"
   },
   "scripts": {
     "start": "WATCHPACK_POLLING=true react-scripts start",

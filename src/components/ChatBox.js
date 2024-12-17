@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assets/css/prompt.css';
 
-const ChatBox = ({ handleClearChat, handleSubmit, chat }) => {
+const ChatBox = ({ handleClearChat, handleSubmit, userMessage, chat }) => {
     return (
         <div className="filter-box filters" style={{ border: '2px solid #36313D', display: 'flex', flexDirection: 'column', height: '80vh' }}>
             <div className="filter-box-header">
@@ -10,15 +10,11 @@ const ChatBox = ({ handleClearChat, handleSubmit, chat }) => {
             </div>
             <div className="chat-body" id="chatBody">
                 {
-                    chat?.length === 0 ? <></> :
-                        chat?.map((data, index) => {
-                            return (
-                                <React.Fragment key={index}>
-                                    <div className="chat-message chat-message-user">{data.userMessage}</div>
-                                    <div className="chat-message chat-message-bot">{data.botMessage}</div>
-                                </React.Fragment>
-                            );
-                        })}
+                    <>
+                        {userMessage !== '' ? <div className="chat-message chat-message-user">{userMessage}</div> : <></>}
+                        {chat.botMessage !== '' ? <div className="chat-message chat-message-bot">{chat.botMessage}</div> : <></>}
+                    </>
+                }
             </div>
             <div className="chat-input">
                 <textarea id="chatInput" className="form-control" placeholder="Type your message here..." autoComplete="off" style={{ border: '2px solid #36313D', height: '150px', color: 'white' }}></textarea>
