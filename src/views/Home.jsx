@@ -48,7 +48,7 @@ const Home = () => {
     setUserMessage(message);
 
     try {
-      const ollamaModel = await new Ollama({ model: 'llama3:latest', stream: true, baseUrl: 'http://localhost:11434' });
+      const ollamaModel = await new Ollama({ model: 'llama3:latest', stream: true, baseUrl: 'http://197.156.243.44:11434' });
       await mainChatMessageHistory.addMessage(new HumanMessage(prompt));
       const stream = new ReadableStream({
         async start(controller) {
