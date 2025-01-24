@@ -10,7 +10,7 @@ const AgentService = () => {
     dispatch(setIsLoading(true));
 
     try {
-      const response = await axios.post("http://localhost:5000/agent", {"input": input}, {
+      const response = await axios.post("http://197.156.243.44:5000/agent", {"input": input}, {
         headers: {
           "Content-Type": "application/json",
         },
